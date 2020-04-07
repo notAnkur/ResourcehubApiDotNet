@@ -33,7 +33,15 @@ namespace ResourcehubApiDotNet.Controllers.Auth
             string twitterRedirectUrl = Configuration["REDIRECT_URL_BASE"] + "/twitter/callback";
             Console.WriteLine("twitter URL -> "+twitterRedirectUrl);
             Console.WriteLine(Configuration["ACCESS_KEY"]);
-            var url = twitterUtils.GetRequestToken(Configuration["ACCESS_KEY"], Configuration["ACCESS_KEY_SECRET"], twitterRedirectUrl);
+
+            var url = twitterUtils.GetRequestToken(
+                Configuration["API_KEY"],
+                Configuration["API_KEY_SECRET"],
+                Configuration["ACCESS_KEY"],
+                Configuration["ACCESS_KEY_SECRET"], 
+                twitterRedirectUrl
+            );
+
             return Redirect(url);
         }
 

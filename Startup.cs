@@ -9,28 +9,35 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
+using ResourcehubApiDotNet.Models;
 
 namespace ResourcehubApiDotNet
 {
     public class Startup
     {
 
-        public Startup(IWebHostEnvironment env)
-        {
-            var builder = new ConfigurationBuilder().SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddEnvironmentVariables();
+        public IConfiguration Configuration { get; }
+        public Startup(IConfiguration configuration) => Configuration = configuration;
 
-            if(env.IsDevelopment())
-            {
-                builder.AddUserSecrets<Startup>();
-            }
-        }
+        // public Startup(IWebHostEnvironment env)
+        // {
+        //     var builder = new ConfigurationBuilder().SetBasePath(env.ContentRootPath)
+        //         .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+        //         .AddEnvironmentVariables();
+
+        //     if(env.IsDevelopment())
+        //     {
+        //         builder.AddUserSecrets<Startup>();
+        //     }
+        // }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<DatabaseContext>
+                (opt => opt.UseNpgsql(Configuration["DATABASE_URL"]));
             services.AddMvc(option => option.EnableEndpointRouting=false).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
         }

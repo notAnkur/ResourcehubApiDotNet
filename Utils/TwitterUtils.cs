@@ -11,13 +11,6 @@ namespace ResourcehubApiDotNet.Utils
         {
             var client = new RestClient("https://api.twitter.com")
             {
-                /*
-                Authenticator = OAuth1Authenticator.ForRequestToken(
-                    access_key, 
-                    access_key_secret,
-                    "https://resourcehubdotnet.herokuapp.com/auth/twitter/callback"
-                )
-                */
                 Authenticator = RestSharp.Authenticators.OAuth1Authenticator.ForProtectedResource(
                     apiKey, 
                     apiKeySecret, 
@@ -40,6 +33,27 @@ namespace ResourcehubApiDotNet.Utils
             string url = client.BuildUri(request).ToString();
 
             return url;
+        }
+
+        public string GetAccessToken(string key, string secret, string oauthToken, string oauthTokenSecret, string oauthVerifier)
+        {
+            var client = new RestClient("https://api.twitter.com");
+
+            var request = new RestRequest("/oauth/access_token", Method.POST);
+
+            client.Authenticator = OAuth1Authenticator.ForAccessToken(key, secret, oauthToken, oauthTokenSecret, oauthVerifier);
+
+            var response = client.Execute(request);
+            if(response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                var qs = HttpUtility.ParseQueryString(response.Content);
+                Console.WriteLine(qs);
+
+                return qs["screen_name"];
+            } else
+            {
+                return "Auth error: Couldn't get oauth token";
+            }
         }
     }
 }

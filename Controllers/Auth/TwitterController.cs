@@ -10,12 +10,8 @@ namespace ResourcehubApiDotNet.Controllers.Auth
     public class TwitterController : Controller
     {
 
-        public TwitterController(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-
         public IConfiguration Configuration { get; }
+        public TwitterController(IConfiguration configuration) => Configuration = configuration;
 
         [Route("auth/[controller]")]
         [HttpGet]
@@ -47,9 +43,17 @@ namespace ResourcehubApiDotNet.Controllers.Auth
 
         [Route("auth/[controller]/callback")]
         [HttpGet]
-        public ActionResult GetTwitterAuthCallback()
+        public ActionResult GetTwitterAuthCallback(string oauth_token, string oauth_verifier)
         {
-            return Json(new { test = "yolo"});
+            var twitterUtils = new TwitterUtils();
+            string screenName = twitterUtils.GetAccessToken(
+                    Configuration["API_KEY"],
+                    Configuration["API_KEY_SECRET"],
+                    oauth_token,
+                    "",
+                    oauth_verifier
+                );
+            return Json(new { test = "Sup "+screenName});
         }
     }
 }

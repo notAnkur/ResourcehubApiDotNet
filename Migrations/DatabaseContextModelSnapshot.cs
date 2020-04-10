@@ -54,7 +54,9 @@ namespace ResourcehubApiDotNet.Migrations
                         .HasColumnType("text");
 
                     b.Property<int>("Id")
-                        .HasColumnType("integer");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
                     b.Property<string>("avatar")
                         .HasColumnType("text");

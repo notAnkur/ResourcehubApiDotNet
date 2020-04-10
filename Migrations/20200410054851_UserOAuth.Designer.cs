@@ -9,8 +9,8 @@ using ResourcehubApiDotNet.Models;
 namespace ResourcehubApiDotNet.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20200409171403_UserOauth")]
-    partial class UserOauth
+    [Migration("20200410054851_UserOAuth")]
+    partial class UserOAuth
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -56,7 +56,9 @@ namespace ResourcehubApiDotNet.Migrations
                         .HasColumnType("text");
 
                     b.Property<int>("Id")
-                        .HasColumnType("integer");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
                     b.Property<string>("avatar")
                         .HasColumnType("text");

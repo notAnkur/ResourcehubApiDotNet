@@ -3,7 +3,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace ResourcehubApiDotNet.Migrations
 {
-    public partial class UserOauth : Migration
+    public partial class UserOAuth : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -30,7 +30,8 @@ namespace ResourcehubApiDotNet.Migrations
                 columns: table => new
                 {
                     username = table.Column<string>(nullable: false),
-                    Id = table.Column<int>(nullable: false),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     email = table.Column<string>(nullable: true),
                     isEmailVerified = table.Column<bool>(nullable: false),
                     avatar = table.Column<string>(nullable: true),

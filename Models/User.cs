@@ -1,10 +1,14 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace ResourcehubApiDotNet.Models
 {
     public class User
     {
-        public int Id { get; set; }
-        [System.ComponentModel.DataAnnotations.Key]
+        [Key]
         public string username { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
         public string email { get; set; }
         public bool isEmailVerified { get; set; }
         public string avatar { get; set; }

@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using ResourcehubApiDotNet.Utils;
 using System;
+using ResourcehubApiDotNet.Models;
+using System.Web;
 
 namespace ResourcehubApiDotNet.Controllers.Auth
 {
@@ -11,7 +13,12 @@ namespace ResourcehubApiDotNet.Controllers.Auth
     {
 
         public IConfiguration Configuration { get; }
-        public TwitterController(IConfiguration configuration) => Configuration = configuration;
+        private readonly DatabaseContext _databaseContext;
+        public TwitterController(IConfiguration configuration, DatabaseContext databaseContext)
+        {
+            Configuration = configuration;
+            _databaseContext = databaseContext;
+        }
 
         [Route("auth/[controller]")]
         [HttpGet]
@@ -34,7 +41,7 @@ namespace ResourcehubApiDotNet.Controllers.Auth
                 Configuration["API_KEY"],
                 Configuration["API_KEY_SECRET"],
                 Configuration["ACCESS_KEY"],
-                Configuration["ACCESS_KEY_SECRET"], 
+                Configuration["ACCESS_KEY_SECRET"],
                 twitterRedirectUrl
             );
 
@@ -45,15 +52,27 @@ namespace ResourcehubApiDotNet.Controllers.Auth
         [HttpGet]
         public ActionResult GetTwitterAuthCallback(string oauth_token, string oauth_verifier)
         {
-            var twitterUtils = new TwitterUtils();
-            string screenName = twitterUtils.GetAccessToken(
-                    Configuration["API_KEY"],
-                    Configuration["API_KEY_SECRET"],
-                    oauth_token,
-                    "",
-                    oauth_verifier
-                );
-            return Json(new { test = "Sup "+screenName});
+            TwitterUtils twitterUtils = new TwitterUtils();
+
+            string accessTokenResponse = twitterUtils.GetAccessToken(
+                Configuration["API_KEY"],
+                Configuration["API_KEY_SECRET"],
+                oauth_token,
+                "",
+                oauth_verifier
+            );
+            var accessTokenQueryString = HttpUtility.ParseQueryString(accessTokenResponse);
+
+            // TODO: check and save user in the db
+
+            var user = twitterUtils.GetUser(
+                accessTokenQueryString["screen_name"],
+                Configuration["API_KEY"],
+                Configuration["API_KEY_SECRET"]
+            );
+
+            // TODO: Redirect to frontend along with jwt
+            return Json(new { test = "Sup "+accessTokenQueryString["screen_name"]});
         }
     }
 }
